@@ -21,7 +21,6 @@ from neural_wbc.core import math_utils
 from ..body_state import BodyState
 from ..reference_motion import ReferenceMotionState
 
-
 def compute_teacher_observations(
     body_state: BodyState,
     ref_motion_state: ReferenceMotionState,

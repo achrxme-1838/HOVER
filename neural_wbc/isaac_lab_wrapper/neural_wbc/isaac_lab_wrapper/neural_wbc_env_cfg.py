@@ -68,8 +68,8 @@ class NeuralWBCEnvCfg(DirectRLEnvCfg):
     body_names: list[str] = MISSING
     joint_names: list[str] = MISSING
     tracked_body_names: list[str] = MISSING
-    stiffness: dict[str, float] = MISSING
-    damping: dict[str, float] = MISSING
+    stiffness: dict[str, float] = None
+    damping: dict[str, float] = None
     mass_randomized_body_names: list[str] = MISSING
     undesired_contact_body_names: list[str] = MISSING
     extend_body_parent_names: list[str] = []

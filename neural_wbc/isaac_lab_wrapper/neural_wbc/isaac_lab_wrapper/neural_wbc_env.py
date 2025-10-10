@@ -115,17 +115,14 @@ class NeuralWBCEnv(DirectRLEnv):
         self.default_kp_scale = self.kp_scale.clone()
         self.default_kd_scale = self.kd_scale.clone()
 
-        for key, value in self.cfg.stiffness.items():
-            joint_ids, joint_names = self._robot.find_joints(key, preserve_order=True)
-            self._p_gains[:, joint_ids] = value
-        for key, value in self.cfg.damping.items():
-            joint_ids, joint_names = self._robot.find_joints(key, preserve_order=True)
-            self._d_gains[:, joint_ids] = value
-        self._p_gains = self._p_gains[:, self._joint_ids]
-        self._d_gains = self._d_gains[:, self._joint_ids]
-
-        print_config("self._p_gains", self._joint_names, self._p_gains[0])
-        print_config("self._d_gains", self._joint_names, self._d_gains[0])
+        # for key, value in self.cfg.stiffness.items():
+        #     joint_ids, joint_names = self._robot.find_joints(key, preserve_order=True)
+        #     self._p_gains[:, joint_ids] = value
+        # for key, value in self.cfg.damping.items():
+        #     joint_ids, joint_names = self._robot.find_joints(key, preserve_order=True)
+        #     self._d_gains[:, joint_ids] = value
+        self._p_gains = self._robot.data.joint_stiffness[:, self._joint_ids]
+        self._d_gains = self._robot.data.joint_damping[:, self._joint_ids]
 
         # resolve the controller
         self._control_fn = resolve_control_fn(self.cfg.control_type)
@@ -398,7 +395,7 @@ class NeuralWBCEnv(DirectRLEnv):
         )
 
         if self.cfg.add_policy_obs_noise:
-            obs_dic["teacher_policy"] = self._observation_noise_model.apply(obs_dic["teacher_policy"])
+            obs_dic["teacher_policy"] = self._observation_noise_model(obs_dic["teacher_policy"])
 
         return obs_dic
 

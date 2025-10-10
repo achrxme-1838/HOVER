@@ -66,69 +66,70 @@ class NeuralWBCRewardCfg:
     torque_limits_scale = 0.85
     # The order here follows the order in cfg.joint_names
     torque_limits = [
-        200.0,
-        200.0,
-        200.0,
-        300.0,
-        40.0,
-        200.0,
-        200.0,
-        200.0,
-        300.0,
-        40.0,
-        200.0,
-        40.0,
-        40.0,
-        18.0,
-        18.0,
-        40.0,
-        40.0,
-        18.0,
-        18.0,
+        88,   # left_hip_pitch_joint
+        139,  # left_hip_roll_joint
+        88,   # left_hip_yaw_joint
+        139,  # left_knee_joint
+        35,   # left_ankle_pitch_joint
+        35,   # left_ankle_roll_joint
+
+        88,   # right_hip_pitch_joint
+        139,  # right_hip_roll_joint
+        88,   # right_hip_yaw_joint
+        139,  # right_knee_joint
+        35,   # right_ankle_pitch_joint
+        35,   # right_ankle_roll_joint
+
+        88,   # waist_yaw_joint
+
+        25, 25, 25, 25, 25,  # left arm
+        25, 25, 25, 25, 25   # right arm
     ]
+
     # Joint pos limits, in the form of (lower_limit, upper_limit)
-    joint_pos_limits = [
-        (-0.43, 0.43),
-        (-0.43, 0.43),
-        (-1.57, 1.57),
-        (-0.26, 2.05),
-        (-0.87, 0.52),
-        (-0.43, 0.43),
-        (-0.43, 0.43),
-        (-1.57, 1.57),
-        (-0.26, 2.05),
-        (-0.87, 0.52),
-        (-2.35, 2.35),
-        (-2.87, 2.87),
-        (-0.34, 3.11),
-        (-1.3, 4.45),
-        (-1.25, 2.61),
-        (-2.87, 2.87),
-        (-3.11, 0.34),
-        (-4.45, 1.3),
-        (-1.25, 2.61),
-    ]
+    # TODO: change these limits
+    # joint_pos_limits = [
+    #     (-0.43, 0.43),
+    #     (-0.43, 0.43),
+    #     (-1.57, 1.57),
+    #     (-0.26, 2.05),
+    #     (-0.87, 0.52),
+    #     (-0.43, 0.43),
+    #     (-0.43, 0.43),
+    #     (-1.57, 1.57),
+    #     (-0.26, 2.05),
+    #     (-0.87, 0.52),
+    #     (-2.35, 2.35),
+    #     (-2.87, 2.87),
+    #     (-0.34, 3.11),
+    #     (-1.3, 4.45),
+    #     (-1.25, 2.61),
+    #     (-2.87, 2.87),
+    #     (-3.11, 0.34),
+    #     (-4.45, 1.3),
+    #     (-1.25, 2.61),
+    # ]
     joint_vel_limits_scale = 0.85
-    joint_vel_limits = [
-        23.0,
-        23.0,
-        23.0,
-        14.0,
-        9.0,
-        23.0,
-        23.0,
-        23.0,
-        14.0,
-        9.0,
-        23.0,
-        9.0,
-        9.0,
-        20.0,
-        20.0,
-        9.0,
-        9.0,
-        20.0,
-        20.0,
-    ]
+    # joint_vel_limits = [
+    #     23.0,
+    #     23.0,
+    #     23.0,
+    #     14.0,
+    #     9.0,
+    #     23.0,
+    #     23.0,
+    #     23.0,
+    #     14.0,
+    #     9.0,
+    #     23.0,
+    #     9.0,
+    #     9.0,
+    #     20.0,
+    #     20.0,
+    #     9.0,
+    #     9.0,
+    #     20.0,
+    #     20.0,
+    # ]
     max_contact_force = 500.0
     max_feet_height_limit_before_contact = 0.25

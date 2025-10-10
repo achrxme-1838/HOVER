@@ -52,10 +52,16 @@ class NeuralWBCRewards:
         self._device = env.device
         self._cfg = reward_cfg
         self._torque_limits = torch.tensor(self._cfg.torque_limits, device=self._device) * self._cfg.torque_limits_scale
-        self._joint_pos_limits = torch.tensor(self._cfg.joint_pos_limits, device=self._device)
+        # self._joint_pos_limits = torch.tensor(self._cfg.joint_pos_limits, device=self._device)
+        self._joint_pos_limits = torch.tensor(env._robot.root_physx_view.get_dof_limits()[0], device=self._device)[env._joint_ids]
+
+        # self._joint_vel_limits = (
+        #     torch.tensor(self._cfg.joint_vel_limits, device=self._device) * self._cfg.joint_vel_limits_scale
+        # )
         self._joint_vel_limits = (
-            torch.tensor(self._cfg.joint_vel_limits, device=self._device) * self._cfg.joint_vel_limits_scale
-        )
+            torch.tensor(env._robot.root_physx_view.get_dof_max_velocities()[0], device=self._device) * self._cfg.joint_vel_limits_scale
+        )[env._joint_ids]
+        
         self.contact_sensor = contact_sensor
         self.contact_sensor_feet_ids = contact_sensor_feet_ids
         self._body_state_feet_ids = body_state_feet_ids

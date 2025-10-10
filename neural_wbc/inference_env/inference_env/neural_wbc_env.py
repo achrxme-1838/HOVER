@@ -121,14 +121,17 @@ class NeuralWBCEnv(EnvironmentWrapper):
         print("[INFO]: Setting up pd gains")
         self._p_gains = torch.zeros((self.num_envs, self.num_actions), dtype=torch.float, device=self.device)
         self._d_gains = torch.zeros((self.num_envs, self.num_actions), dtype=torch.float, device=self.device)
-        for key, value in self.cfg.stiffness.items():
-            joint_id_dict = self._robot.get_joint_ids([key])
-            self._p_gains[:, joint_id_dict[key]] = value
-            print("[INFO]: Setting up p gains", joint_id_dict[key], key, value)
-        for key, value in self.cfg.damping.items():
-            joint_id_dict = self._robot.get_joint_ids([key])
-            self._d_gains[:, joint_id_dict[key]] = value
-            print("[INFO]: Setting up d gains", joint_id_dict[key], key, value)
+        # for key, value in self.cfg.stiffness.items():
+        #     joint_id_dict = self._robot.get_joint_ids([key])
+        #     self._p_gains[:, joint_id_dict[key]] = value
+        #     print("[INFO]: Setting up p gains", joint_id_dict[key], key, value)
+        # for key, value in self.cfg.damping.items():
+        #     joint_id_dict = self._robot.get_joint_ids([key])
+        #     self._d_gains[:, joint_id_dict[key]] = value
+        #     print("[INFO]: Setting up d gains", joint_id_dict[key], key, value)
+
+        self._p_gains = self._robot.data.joint_stiffness[:, self._joint_ids]
+        self._d_gains = self._robot.data.joint_damping[:, self._joint_ids]
 
         self._effort_limit = torch.zeros((self.num_envs, self.num_actions), dtype=torch.float, device=self.device)
         for key, value in self.cfg.effort_limit.items():
