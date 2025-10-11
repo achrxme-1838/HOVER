@@ -198,7 +198,6 @@ class ReferenceMotionManager:
                 motion_res["rg_pos_t"][:, :, 2] += delta_height
 
         # Remove 'waist_yaw_link', 'waist_roll_link'
-        # TODO: these values are too large (init pos?)
         remove_body_indices = [13, 14]
         for key in ["rg_pos", "rg_pos_t", "rb_rot", "body_vel", "body_ang_vel"]:
             if key in motion_res:

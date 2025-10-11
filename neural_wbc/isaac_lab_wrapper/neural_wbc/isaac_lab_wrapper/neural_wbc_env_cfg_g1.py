@@ -121,6 +121,7 @@ class NeuralWBCEnvCfgG1(NeuralWBCEnvCfg):
 
     robot: ArticulationCfg = G1_CFG.replace(prim_path="/World/envs/env_.*/Robot", actuators=actuators)
 
+    # It should be same as MJCF model order (DFS) (exclude extended)
     body_names = [
         "pelvis",
 

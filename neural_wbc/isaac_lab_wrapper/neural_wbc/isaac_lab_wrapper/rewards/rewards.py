@@ -227,8 +227,8 @@ class NeuralWBCRewards:
         ref_body_pos_extend = ref_motion_state.body_pos_extend
 
         diff_global_body_pos = ref_body_pos_extend - body_pos_extend
-        diff_global_body_pos_lower = diff_global_body_pos[:, :11]
-        diff_global_body_pos_upper = diff_global_body_pos[:, 11:]
+        diff_global_body_pos_lower = diff_global_body_pos[:, :13]
+        diff_global_body_pos_upper = diff_global_body_pos[:, 13:]
         diff_body_pos_dist_lower = (diff_global_body_pos_lower**2).mean(dim=-1).mean(dim=-1)
         diff_body_pos_dist_upper = (diff_global_body_pos_upper**2).mean(dim=-1).mean(dim=-1)
         r_body_pos_lower = torch.exp(-diff_body_pos_dist_lower / self._cfg.body_pos_lower_body_sigma)
