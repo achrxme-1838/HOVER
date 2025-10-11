@@ -51,7 +51,10 @@ class NeuralWBCRewards:
         self._num_envs = env.num_envs
         self._device = env.device
         self._cfg = reward_cfg
-        self._torque_limits = torch.tensor(self._cfg.torque_limits, device=self._device) * self._cfg.torque_limits_scale
+
+        # self._torque_limits = torch.tensor(self._cfg.torque_limits, device=self._device) * self._cfg.torque_limits_scale
+        self._torque_limits = torch.tensor(env._robot.root_physx_view.get_dof_max_forces()[0], device=self._device)[env._joint_ids] * self._cfg.torque_limits_scale
+
         # self._joint_pos_limits = torch.tensor(self._cfg.joint_pos_limits, device=self._device)
         self._joint_pos_limits = torch.tensor(env._robot.root_physx_view.get_dof_limits()[0], device=self._device)[env._joint_ids]
 
