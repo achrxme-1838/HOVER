@@ -197,6 +197,14 @@ class ReferenceMotionManager:
             if "rg_pos_t" in motion_res:
                 motion_res["rg_pos_t"][:, :, 2] += delta_height
 
+        # Remove 'waist_yaw_link', 'waist_roll_link'
+        # TODO: these values are too large (init pos?)
+        remove_body_indices = [13, 14]
+        for key in ["rg_pos", "rg_pos_t", "rb_rot", "body_vel", "body_ang_vel"]:
+            if key in motion_res:
+                for idx in sorted(remove_body_indices, reverse=True):
+                    motion_res[key] = torch.cat([motion_res[key][:, :idx, :], motion_res[key][:, idx+1:, :]], dim=1)
+
         # Update quaternion convention
         if quaternion_is_xyzw:
             for key, value in motion_res.items():

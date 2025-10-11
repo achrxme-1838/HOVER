@@ -59,9 +59,8 @@ DISTILL_MASK_MODES_ALL = {
 class NeuralWBCEnvCfgG1(NeuralWBCEnvCfg):
     # General parameters:
     action_space = 23  # 19
-    observation_space = 1073   # 913
-    state_space = 1162  # 990
-
+    observation_space = 995   # 913
+    state_space = 1084  # 990
     # Distillation parameters:
     single_history_dim = 63
     observation_history_length = 25
@@ -123,30 +122,33 @@ class NeuralWBCEnvCfgG1(NeuralWBCEnvCfg):
     robot: ArticulationCfg = G1_CFG.replace(prim_path="/World/envs/env_.*/Robot", actuators=actuators)
 
     body_names = [
-        'pelvis',
-        'left_hip_pitch_link',
-        'right_hip_pitch_link',
-        'torso_link',
-        'left_hip_roll_link',
-        'right_hip_roll_link',
-        'left_shoulder_pitch_link',
-        'right_shoulder_pitch_link',
-        'left_hip_yaw_link',
-        'right_hip_yaw_link',
-        'left_shoulder_roll_link',
-        'right_shoulder_roll_link',
-        'left_knee_link',
-        'right_knee_link',
-        'left_shoulder_yaw_link',
-        'right_shoulder_yaw_link',
-        'left_ankle_pitch_link',
-        'right_ankle_pitch_link',
-        'left_elbow_link',
-        'right_elbow_link',
-        'left_ankle_roll_link',
-        'right_ankle_roll_link',
-        'left_wrist_roll_rubber_hand',
-        'right_wrist_roll_rubber_hand'
+        "pelvis",
+
+        "left_hip_pitch_link", 
+        "left_hip_roll_link", 
+        "left_hip_yaw_link", 
+        "left_knee_link", 
+        "left_ankle_pitch_link", 
+        "left_ankle_roll_link", 
+
+        "right_hip_pitch_link", 
+        "right_hip_roll_link", 
+        "right_hip_yaw_link", 
+        "right_knee_link", 
+        "right_ankle_pitch_link", 
+        "right_ankle_roll_link", 
+
+        "torso_link", 
+
+        "left_shoulder_pitch_link", 
+        "left_shoulder_roll_link", 
+        "left_shoulder_yaw_link", 
+        "left_elbow_link", 
+
+        "right_shoulder_pitch_link", 
+        "right_shoulder_roll_link", 
+        "right_shoulder_yaw_link", 
+        "right_elbow_link", 
     ]
 
     # Joint names by the order in the MJCF model.
@@ -189,10 +191,9 @@ class NeuralWBCEnvCfgG1(NeuralWBCEnvCfg):
 
     feet_name = ".*_ankle_roll_link"
 
-    # extend_body_parent_names = ["left_elbow_link", "right_elbow_link", "pelvis"]
-    extend_body_parent_names = ["left_wrist_roll_rubber_hand", "right_wrist_roll_rubber_hand", "pelvis"]
+    extend_body_parent_names = ["left_elbow_link", "right_elbow_link", "torso_link"]
     extend_body_names = ["left_hand_link", "right_hand_link", "head_link"]
-    extend_body_pos = torch.tensor([[0.3, 0, 0], [0.3, 0, 0], [0, 0, 0.75]])  # Should be tuned
+    extend_body_pos = torch.tensor([[0.25, 0, 0], [0.25, 0, 0], [0, 0, 0.42]])  # Should be tuned
 
     # These are the bodies that are tracked by the teacher. They may also contain the extended
     # bodies.
@@ -215,13 +216,11 @@ class NeuralWBCEnvCfgG1(NeuralWBCEnvCfg):
         "left_shoulder_roll_link",
         "left_shoulder_yaw_link",
         "left_elbow_link",
-        "left_wrist_roll_rubber_hand",
+        "left_hand_link",
         "right_shoulder_pitch_link",
         "right_shoulder_roll_link",
         "right_shoulder_yaw_link",
         "right_elbow_link",
-        "right_wrist_roll_rubber_hand",
-        "left_hand_link",
         "right_hand_link",
         "head_link",
     ]
@@ -239,10 +238,13 @@ class NeuralWBCEnvCfgG1(NeuralWBCEnvCfg):
 
     undesired_contact_body_names = [
         "pelvis",
-        ".*_yaw_link",
-        ".*_roll_link",
-        ".*_pitch_link",
-        ".*_knee_link",
+        "torso_link",
+        ".*_shoulder_.*",
+        ".*_elbow_.*",
+        # ".*_wrist_.*",
+        # "*_hip_.*",
+        # ".*_pitch_link",
+        # ".*_knee_link",
     ]
 
     # Add a height scanner to the torso to detect the height of the terrain mesh
