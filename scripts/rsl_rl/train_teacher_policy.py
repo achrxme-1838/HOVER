@@ -33,6 +33,7 @@ parser.add_argument("--num_envs", type=int, default=None, help="Number of enviro
 parser.add_argument("--seed", type=int, default=None, help="Seed used for the environment")
 parser.add_argument("--reference_motion_path", type=str, default=None, help="Path to the reference motion dataset.")
 parser.add_argument("--robot", type=str, choices=["g1", "h1", "gr1"], default="g1", help="Robot used in environment")
+parser.add_argument("--logger", type=str, default=None, choices={"wandb"}, help="Logger module to use.")
 
 # append RSL-RL cli arguments
 TeacherPolicyCfg.add_args_to_parser(parser)
@@ -78,6 +79,12 @@ def main():
         env_cfg = NeuralWBCEnvCfgG1()
     elif args_cli.robot == "gr1":
         raise ValueError("GR1 is not yet implemented")
+    
+    logger_cfg = args_cli.logger
+    if logger_cfg == "wandb":
+        import wandb
+        wandb.init(project='HOVER', name='teacher_policy_training')
+
 
     env_cfg.scene.num_envs = args_cli.num_envs
     env_cfg.scene.env_spacing = 20
@@ -105,7 +112,9 @@ def main():
         ppo_runner.load(checkpoint_path)
         print(f"[INFO]: Loaded model checkpoint from: {checkpoint_path}")
     else:
-        ppo_runner = OnPolicyRunner(env, teacher_policy_cfg.to_dict(), log_dir=log_dir, device=env.unwrapped.device)
+        ppo_runner = OnPolicyRunner(env, teacher_policy_cfg.to_dict(), 
+                                    log_dir=log_dir, device=env.unwrapped.device,
+                                    logger_cfg=logger_cfg)
 
     # Store the configuration
     teacher_policy_cfg.save(os.path.join(log_dir, "config.json"))

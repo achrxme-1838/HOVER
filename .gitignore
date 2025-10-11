@@ -4,3 +4,5 @@ logs/
 /data/
 third_party/human2humanoid
 *.pkl
+
+scripts/rsl_rl/wandb/*
