@@ -209,6 +209,11 @@ class NeuralWBCEnv(DirectRLEnv):
         self._episode_sums = {
             key: torch.zeros(self.num_envs, dtype=torch.float, device=self.device) for key in self.cfg.rewards.scales
         }
+        self._env_means = {
+            key: torch.zeros(1, dtype=torch.float, device=self.device) for key in self.cfg.rewards.scales
+        }
+
+
 
         # Load reference motion
         self._ref_motion_mgr = ReferenceMotionManager(
@@ -430,6 +435,7 @@ class NeuralWBCEnv(DirectRLEnv):
 
         # Logging
         for key, value in rewards.items():
+            self._env_means[key] = torch.mean(value)
             self._episode_sums[key] += value
 
         return reward_sum
@@ -518,6 +524,10 @@ class NeuralWBCEnv(DirectRLEnv):
             episodic_sum_avg = torch.mean(self._episode_sums[key][env_ids])
             extras["Episode_Reward/" + key] = episodic_sum_avg / self.max_episode_length_s
             self._episode_sums[key][env_ids] = 0.0 * self._episode_sums[key][env_ids]
+
+        for key in self._env_means.keys():
+            extras["Env_Mean/" + key] = self._env_means[key].item()
+            self._env_means[key] = 0.0 * self._env_means[key]
 
         self.extras["log"] = dict()
         self.extras["log"].update(extras)
