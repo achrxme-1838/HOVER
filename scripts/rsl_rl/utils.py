@@ -55,7 +55,7 @@ def get_player_args(description: str) -> argparse.ArgumentParser:
     parser.add_argument("--env_spacing", type=int, default=5, help="Distance between environments in simulator.")
     parser.add_argument("--seed", type=int, default=None, help="Seed used for the environment")
     parser.add_argument("--reference_motion_path", type=str, default=None, help="Path to the reference motion dataset.")
-    parser.add_argument("--robot", type=str, choices=["h1", "gr1"], default="h1", help="Robot used in environment")
+    parser.add_argument("--robot", type=str, choices=["h1", "gr1", "g1"], default="g1", help="Robot used in environment")
     parser.add_argument(
         "--student_player", action="store_true", help="Whether the evaluated policy is a student policy."
     )
@@ -81,12 +81,17 @@ def get_ppo_runner_and_checkpoint_path(
     if not checkpoint:
         raise ValueError("teacher_policy.checkpoint is not specified")
     # specify directory for logging experiments
-    print(f"[INFO] Loading experiment from directory: {teacher_policy_cfg.runner.path}")
-    checkpoint_path = os.path.join(resume_path, teacher_policy_cfg.runner.checkpoint)
+    # print(f"[INFO] Loading experiment from directory: {teacher_policy_cfg.runner.path}")
+
+    log_root_path = "/home/lim/rl_ws/HOVER/scripts/rsl_rl/logs"
+    root_resume_path = os.path.join(log_root_path, resume_path)
+
+    checkpoint_file = f"model_{checkpoint}.pt"
+    checkpoint_path = os.path.join(root_resume_path, checkpoint_file)
     print(f"[INFO]: Loading model checkpoint from: {checkpoint_path}")
 
     # Try overwrite policy configuration with the content from {log_root_path}/config.json.
-    teacher_policy_cfg.overwrite_policy_cfg_from_file(os.path.join(resume_path, "config.json"))
+    teacher_policy_cfg.overwrite_policy_cfg_from_file(os.path.join(root_resume_path, "config.json"))
 
     # load previously trained model
     ppo_runner = OnPolicyRunner(wrapped_env, teacher_policy_cfg.to_dict(), log_dir=log_dir, device=device)
