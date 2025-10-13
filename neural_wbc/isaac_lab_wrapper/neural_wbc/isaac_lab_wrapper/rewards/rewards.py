@@ -367,7 +367,8 @@ class NeuralWBCRewards:
             torch.Tensor: A float tensor of shape (num_envs) representing the computed penalty for each environment.
         """
         # Joints 0 - 10 are lower body joints in Isaac Gym.
-        return torch.sum(torch.square(previous_actions[:, :11] - actions[:, :11]), dim=1)
+        # return torch.sum(torch.square(previous_actions[:, :11] - actions[:, :11]), dim=1)
+        return torch.sum(torch.square(previous_actions[:, :13] - actions[:, :13]), dim=1)
 
     def penalize_upper_body_action_changes(
         self,
@@ -384,7 +385,8 @@ class NeuralWBCRewards:
             torch.Tensor: A float tensor of shape (num_envs) representing the computed penalty for each environment.
         """
         # Joints 11 - 19 are upper body joints in Isaac Gym.
-        return torch.sum(torch.square(previous_actions[:, 11:] - actions[:, 11:]), dim=1)
+        # return torch.sum(torch.square(previous_actions[:, 11:] - actions[:, 11:]), dim=1)
+        return torch.sum(torch.square(previous_actions[:, 13:] - actions[:, 13:]), dim=1)
 
     def penalize_by_joint_pos_limits(
         self,
