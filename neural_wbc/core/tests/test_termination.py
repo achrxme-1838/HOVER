@@ -71,8 +71,11 @@ class TestTerminationConditions(unittest.TestCase):
         self.gravity_y_threshold = 0.2
 
         cfg = ReferenceMotionManagerCfg()
-        cfg.motion_path = get_data_path("motions/stable_punch.pkl")
-        cfg.skeleton_path = get_data_path("motion_lib/h1.xml")
+        # cfg.motion_path = get_data_path("motions/stable_punch.pkl")
+        # cfg.skeleton_path = get_data_path("motion_lib/h1.xml")
+        cfg.motion_path = "/home/lim/rl_ws/HOVER/neural_wbc/data/neural_wbc/data/amass_all.pkl"
+        cfg.skeleton_path = get_data_path("motion_lib/g1_29dof_anneal_23dof_fitmotionONLY.xml")
+ 
         self.ref_motion_mgr = ReferenceMotionManager(
             cfg=cfg,
             device=torch.device("cpu"),

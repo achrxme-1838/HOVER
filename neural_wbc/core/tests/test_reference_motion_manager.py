@@ -27,8 +27,11 @@ class TestReferenceMotionManager(unittest.TestCase):
 
     def _create_reference_motion_manager(self):
         cfg = ReferenceMotionManagerCfg()
-        cfg.motion_path = get_data_path("motions/stable_punch.pkl")
-        cfg.skeleton_path = get_data_path("motion_lib/h1.xml")
+        # cfg.motion_path = get_data_path("motions/stable_punch.pkl")
+        # cfg.skeleton_path = get_data_path("motion_lib/h1.xml")
+
+        cfg.motion_path = "/home/lim/rl_ws/HOVER/neural_wbc/data/neural_wbc/data/amass_all.pkl"
+        cfg.skeleton_path = get_data_path("motion_lib/g1_29dof_anneal_23dof_fitmotionONLY.xml")
 
         return ReferenceMotionManager(
             cfg=cfg,

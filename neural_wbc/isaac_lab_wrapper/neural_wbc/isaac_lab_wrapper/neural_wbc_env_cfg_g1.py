@@ -62,7 +62,7 @@ class NeuralWBCEnvCfgG1(NeuralWBCEnvCfg):
     observation_space = 995   # 913
     state_space = 1084  # 990
     # Distillation parameters:
-    single_history_dim = 63
+    single_history_dim = 63  # TODO?
     observation_history_length = 25
 
     # Mask setup for an OH2O specialist policy as default:
