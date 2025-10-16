@@ -157,6 +157,7 @@ class ReferenceMotionManager:
             limb_weights=[np.zeros(10)] * self._num_envs,
             random_sample=random_sample,
             start_idx=start_idx,
+            # max_len=500,
         )
         self._motion_len = self._motion_lib.get_motion_length(self._motion_ids)
         self.reset_motion_start_times(env_ids=self._motion_ids, sample=False)

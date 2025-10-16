@@ -125,31 +125,31 @@ class NeuralWBCEnvCfgG1(NeuralWBCEnvCfg):
     body_names = [
         "pelvis",
 
-        "left_hip_pitch_link", 
-        "left_hip_roll_link", 
-        "left_hip_yaw_link", 
-        "left_knee_link", 
-        "left_ankle_pitch_link", 
-        "left_ankle_roll_link", 
+        "left_hip_pitch_link",
+        "left_hip_roll_link",
+        "left_hip_yaw_link",
+        "left_knee_link",
+        "left_ankle_pitch_link",
+        "left_ankle_roll_link",
 
-        "right_hip_pitch_link", 
-        "right_hip_roll_link", 
-        "right_hip_yaw_link", 
-        "right_knee_link", 
-        "right_ankle_pitch_link", 
-        "right_ankle_roll_link", 
+        "right_hip_pitch_link",
+        "right_hip_roll_link",
+        "right_hip_yaw_link",
+        "right_knee_link",
+        "right_ankle_pitch_link",
+        "right_ankle_roll_link",
 
-        "torso_link", 
+        "torso_link",
 
-        "left_shoulder_pitch_link", 
-        "left_shoulder_roll_link", 
-        "left_shoulder_yaw_link", 
-        "left_elbow_link", 
+        "left_shoulder_pitch_link",
+        "left_shoulder_roll_link",
+        "left_shoulder_yaw_link",
+        "left_elbow_link",
 
-        "right_shoulder_pitch_link", 
-        "right_shoulder_roll_link", 
-        "right_shoulder_yaw_link", 
-        "right_elbow_link", 
+        "right_shoulder_pitch_link",
+        "right_shoulder_roll_link",
+        "right_shoulder_yaw_link",
+        "right_elbow_link",
     ]
 
     # Joint names by the order in the MJCF model.
@@ -168,24 +168,28 @@ class NeuralWBCEnvCfgG1(NeuralWBCEnvCfg):
         "right_ankle_pitch_joint",
         "right_ankle_roll_joint",
 
-        "waist_yaw_joint",
+        "waist_yaw_joint",  # 13
 
         "left_shoulder_pitch_joint",
         "left_shoulder_roll_joint",
         "left_shoulder_yaw_joint",
         "left_elbow_joint",
-        "left_wrist_roll_joint",
+        "left_wrist_roll_joint",  # 18
 
         "right_shoulder_pitch_joint",
         "right_shoulder_roll_joint",
         "right_shoulder_yaw_joint",
         "right_elbow_joint",
-        "right_wrist_roll_joint"
+        "right_wrist_roll_joint"  # 23
         ]
 
+    exclude_joint_idx_from_ref = [14, 15]    # Remove 'waist_roll_joint', 'waist_pitch_joint'  (MJCF order)
+    exclude_joint_idx_from_robot = [17, 22]  # Remove 'left_wrist_roll_joint', 'right_wrist_roll_joint' (MJCF order)
+    # TODO: check the above indices again
+
     # Lower and upper body joint ids in the MJCF model.
-    lower_body_joint_ids = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]  # hips, knees, ankles
-    upper_body_joint_ids = [10, 11, 12, 13, 14, 15, 16, 17, 18]  # torso, shoulders, elbows
+    lower_body_joint_ids = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]  # hips, knees, ankles
+    upper_body_joint_ids = [13, 14, 15, 16, 17, 18, 19, 20, 21, 22]  # torso, shoulders, elbows
 
     base_name = "torso_link"
     root_id = body_names.index(base_name)
@@ -226,7 +230,7 @@ class NeuralWBCEnvCfgG1(NeuralWBCEnvCfg):
         "right_shoulder_roll_link",
         "right_shoulder_yaw_link",
         "right_elbow_link",
-        
+
         "left_hand_link",
         "right_hand_link",
         "head_link",
@@ -271,11 +275,11 @@ class NeuralWBCEnvCfgG1(NeuralWBCEnvCfg):
 
         self.reference_motion_manager.motion_path = "/home/lim/rl_ws/HOVER/neural_wbc/data/neural_wbc/data/amass_all.pkl"
         self.reference_motion_manager.skeleton_path = get_data_path("motion_lib/g1_29dof_anneal_23dof_fitmotionONLY.xml")
-
         if self.terrain.terrain_generator == HARD_ROUGH_TERRAINS_CFG:
             self.events.update_curriculum.params["penalty_level_up_threshold"] = 125
 
         if self.mode == NeuralWBCModes.TRAIN:
+            # self.terrain = flat_terrain
             self.episode_length_s = 20.0
             self.max_ref_motion_dist = 0.5
             self.events = NeuralWBCTrainEventCfg()

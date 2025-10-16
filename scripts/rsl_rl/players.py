@@ -33,10 +33,6 @@ from neural_wbc.isaac_lab_wrapper.neural_wbc_env_cfg_h1 import NeuralWBCEnvCfgH1
 from neural_wbc.isaac_lab_wrapper.neural_wbc_env_cfg_g1 import NeuralWBCEnvCfgG1
 from neural_wbc.student_policy import StudentPolicyTrainer, StudentPolicyTrainerCfg
 
-"""
-python play.py --teacher_policy.resume_path teacher/25_10_11_21-02-27 --teacher_policy.checkpoint 20000 --headless
-"""
-
 
 class Player:
     """Base class of a policy player."""

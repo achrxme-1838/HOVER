@@ -142,6 +142,9 @@ class NeuralWBCEnv(DirectRLEnv):
             requires_grad=False,
         )
 
+        self.exclude_joint_idx_from_ref = self.cfg.exclude_joint_idx_from_ref
+        self.exclude_joint_idx_from_robot = self.cfg.exclude_joint_idx_from_robot
+
         # resolve the control noise: we will add noise to the final torques. the _rfi_lim defines
         # the sample range of the added noise. It represented by the percentage of the control limits.
         # noise = uniform(self.rfi_lim*joint_effort_limit, self.rfi_lim_*joint_effort_limit)

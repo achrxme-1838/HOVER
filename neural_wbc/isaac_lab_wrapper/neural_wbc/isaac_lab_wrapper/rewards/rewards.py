@@ -52,6 +52,8 @@ class NeuralWBCRewards:
         self._device = env.device
         self._cfg = reward_cfg
 
+        self.env = env
+
         # self._torque_limits = torch.tensor(self._cfg.torque_limits, device=self._device) * self._cfg.torque_limits_scale
         self._torque_limits = torch.tensor(env._robot.root_physx_view.get_dof_max_forces()[0], device=self._device)[env._joint_ids] * self._cfg.torque_limits_scale
 
@@ -78,6 +80,16 @@ class NeuralWBCRewards:
         self._feet_max_height_in_air = torch.zeros(
             self._num_envs, len(self.contact_sensor_feet_ids), dtype=torch.float, device=self._device
         )
+
+        exclude_joint_idx_from_ref = self.env.exclude_joint_idx_from_ref
+        exclude_joint_idx_from_robot = self.env.exclude_joint_idx_from_robot
+
+        all_idx = torch.arange(len(self.env._joint_ids), device=self._device)
+
+        self.keep_idx_robot = all_idx[~torch.isin(all_idx, torch.tensor(exclude_joint_idx_from_robot, device=self._device))]
+        self.keep_idx_ref = all_idx[~torch.isin(all_idx, torch.tensor(exclude_joint_idx_from_ref, device=self._device))]
+
+
 
     def compute_reward(
         self,
@@ -143,8 +155,9 @@ class NeuralWBCRewards:
         Returns:
             torch.Tensor: A float tensor of shape (num_envs) representing the computed reward for each environment.
         """
-        joint_pos = body_state.joint_pos
-        ref_joint_pos = ref_motion_state.joint_pos
+        joint_pos = body_state.joint_pos[:, self.keep_idx_robot]
+        ref_joint_pos = ref_motion_state.joint_pos[:, self.keep_idx_ref]
+
         mean_joint_pos_diff_squared = torch.mean(torch.square(ref_joint_pos - joint_pos), dim=1)
         return torch.exp(-mean_joint_pos_diff_squared / self._cfg.joint_pos_sigma)
 
@@ -162,8 +175,8 @@ class NeuralWBCRewards:
         Returns:
             torch.Tensor: A float tensor of shape (num_envs) representing the computed reward for each environment.
         """
-        joint_vel = body_state.joint_vel
-        ref_joint_vel = ref_motion_state.joint_vel
+        joint_vel = body_state.joint_vel[:, self.keep_idx_robot]
+        ref_joint_vel = ref_motion_state.joint_vel[:, self.keep_idx_ref]
         mean_joint_vel_diff_squared = torch.mean(torch.square(ref_joint_vel - joint_vel), dim=1)
         return torch.exp(-mean_joint_vel_diff_squared / self._cfg.joint_vel_sigma)
 

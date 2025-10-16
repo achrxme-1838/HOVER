@@ -13,6 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""
+python play.py --teacher_policy.resume_path teacher/25_10_14_01-00-30 --teacher_policy.checkpoint 20000
+"""
+
 
 from teacher_policy_cfg import TeacherPolicyCfg
 
