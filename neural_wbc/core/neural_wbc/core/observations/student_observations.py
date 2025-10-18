@@ -149,6 +149,7 @@ def compute_joint_command(ref_motion_state: ReferenceMotionState, body_state: Bo
     joint position/velocity.
     """
     delta_joint_pos = ref_motion_state.joint_pos - body_state.joint_pos
+    raise NotImplementedError("MUST apply wrong joint order handling here")
     return torch.cat([delta_joint_pos], dim=-1)
 
 

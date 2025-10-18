@@ -359,8 +359,16 @@ class NeuralWBCEnv(EnvironmentWrapper):
             terrain_heights=self.robot.get_terrain_heights(),
         )
 
-        joint_pos = ref_motion_state.joint_pos[env_ids]
-        joint_vel = ref_motion_state.joint_vel[env_ids]
+        joint_pos_excluded_cfg_order = ref_motion_state.joint_pos[env_ids][:, self.keep_idx_ref]
+        joint_vel_excluded_cfg_order = ref_motion_state.joint_vel[env_ids][:, self.keep_idx_ref]
+
+        joint_pos = torch.zeros((len(env_ids), len(self._joint_ids)), device=self.device)
+        joint_vel = torch.zeros((len(env_ids), len(self._joint_ids)), device=self.device)
+        joint_pos[:, self.keep_idx_robot] = joint_pos_excluded_cfg_order  # joint_pos_full_cfg_order
+        joint_vel[:, self.keep_idx_robot] = joint_vel_excluded_cfg_order
+
+        # joint_pos = ref_motion_state.joint_pos[env_ids]
+        # joint_vel = ref_motion_state.joint_vel[env_ids]
 
         # Note: In IsaacLab implementation, the z direction is offset by a constant, which is not necessary for mujoco.
         root_pos = ref_motion_state.root_pos[env_ids]

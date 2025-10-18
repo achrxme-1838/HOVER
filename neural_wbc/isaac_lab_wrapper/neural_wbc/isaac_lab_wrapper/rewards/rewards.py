@@ -81,15 +81,8 @@ class NeuralWBCRewards:
             self._num_envs, len(self.contact_sensor_feet_ids), dtype=torch.float, device=self._device
         )
 
-        exclude_joint_idx_from_ref = self.env.exclude_joint_idx_from_ref
-        exclude_joint_idx_from_robot = self.env.exclude_joint_idx_from_robot
-
-        all_idx = torch.arange(len(self.env._joint_ids), device=self._device)
-
-        self.keep_idx_robot = all_idx[~torch.isin(all_idx, torch.tensor(exclude_joint_idx_from_robot, device=self._device))]
-        self.keep_idx_ref = all_idx[~torch.isin(all_idx, torch.tensor(exclude_joint_idx_from_ref, device=self._device))]
-
-
+        self.keep_idx_robot = env.keep_idx_robot
+        self.keep_idx_ref = env.keep_idx_ref
 
     def compute_reward(
         self,

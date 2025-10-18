@@ -65,6 +65,9 @@ class NeuralWBCEnv(DirectRLEnv):
             preserve_order=True,
         )
         print_config("self._joint_ids", self._joint_names, self._joint_ids)
+        
+        self.lab_to_cfg_ids = self._joint_ids.copy()
+        self.cfg_to_lab_ids = [self.lab_to_cfg_ids.index(i) for i in range(len(self.lab_to_cfg_ids))]
 
         # Resolve the bodies.
         self._body_ids, self._body_names = self._robot.find_bodies(
@@ -144,6 +147,10 @@ class NeuralWBCEnv(DirectRLEnv):
 
         self.exclude_joint_idx_from_ref = self.cfg.exclude_joint_idx_from_ref
         self.exclude_joint_idx_from_robot = self.cfg.exclude_joint_idx_from_robot
+        all_idx = torch.arange(len(self._joint_ids), device=self.device)
+
+        self.keep_idx_robot = all_idx[~torch.isin(all_idx, torch.tensor(self.exclude_joint_idx_from_robot, device=self.device))]
+        self.keep_idx_ref = all_idx[~torch.isin(all_idx, torch.tensor(self.exclude_joint_idx_from_ref, device=self.device))]
 
         # resolve the control noise: we will add noise to the final torques. the _rfi_lim defines
         # the sample range of the added noise. It represented by the percentage of the control limits.
@@ -285,6 +292,11 @@ class NeuralWBCEnv(DirectRLEnv):
                 + self.cfg.observation_history_length * (num_proprioceptive_states + self.num_actions)
             )
 
+        all_idx = torch.arange(len(self._joint_ids), device=self.device)
+
+        self.keep_idx_robot = all_idx[~torch.isin(all_idx, torch.tensor(self.exclude_joint_idx_from_robot, device=self.device))]
+        self.keep_idx_ref = all_idx[~torch.isin(all_idx, torch.tensor(self.exclude_joint_idx_from_ref, device=self.device))]
+
     def _setup_scene(self):
         self._robot = Articulation(self.cfg.robot)
         self.scene.articulations["robot"] = self._robot
@@ -373,6 +385,7 @@ class NeuralWBCEnv(DirectRLEnv):
             offset=self._start_positions_on_terrain,
             terrain_heights=self.get_terrain_heights(),
         )
+
         self._ref_motion_visualizer.visualize(ref_motion_state, self._mask)
 
         # Add additional data that is useful for evaluation.

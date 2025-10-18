@@ -14,7 +14,7 @@
 # limitations under the License.
 
 """
-python play.py --teacher_policy.resume_path teacher/25_10_14_01-00-30 --teacher_policy.checkpoint 20000
+python play.py --teacher_policy.resume_path teacher/25_10_17_21-47-59 --teacher_policy.checkpoint 40000
 """
 
 

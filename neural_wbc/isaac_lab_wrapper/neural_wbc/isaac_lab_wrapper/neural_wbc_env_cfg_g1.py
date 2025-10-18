@@ -154,7 +154,7 @@ class NeuralWBCEnvCfgG1(NeuralWBCEnvCfg):
 
     # Joint names by the order in the MJCF model.
     joint_names = [
-        "left_hip_pitch_joint",
+        "left_hip_pitch_joint",  # 0
         "left_hip_roll_joint",
         "left_hip_yaw_joint",
         "left_knee_joint",
@@ -168,22 +168,22 @@ class NeuralWBCEnvCfgG1(NeuralWBCEnvCfg):
         "right_ankle_pitch_joint",
         "right_ankle_roll_joint",
 
-        "waist_yaw_joint",  # 13
+        "waist_yaw_joint",  # 12
 
         "left_shoulder_pitch_joint",
         "left_shoulder_roll_joint",
         "left_shoulder_yaw_joint",
         "left_elbow_joint",
-        "left_wrist_roll_joint",  # 18
+        "left_wrist_roll_joint",  # 17
 
         "right_shoulder_pitch_joint",
         "right_shoulder_roll_joint",
         "right_shoulder_yaw_joint",
         "right_elbow_joint",
-        "right_wrist_roll_joint"  # 23
+        "right_wrist_roll_joint"  # 22
         ]
 
-    exclude_joint_idx_from_ref = [14, 15]    # Remove 'waist_roll_joint', 'waist_pitch_joint'  (MJCF order)
+    exclude_joint_idx_from_ref = [13, 14]    # Remove 'waist_roll_joint', 'waist_pitch_joint'  (MJCF order)
     exclude_joint_idx_from_robot = [17, 22]  # Remove 'left_wrist_roll_joint', 'right_wrist_roll_joint' (MJCF order)
     # TODO: check the above indices again
 

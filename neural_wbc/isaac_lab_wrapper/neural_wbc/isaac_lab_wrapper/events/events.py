@@ -334,8 +334,14 @@ def reset_robot_state_and_motion(
 
     env._ref_motion_visualizer.visualize(ref_motion_state)
 
-    joint_pos = ref_motion_state.joint_pos[env_ids]
-    joint_vel = ref_motion_state.joint_vel[env_ids]
+    joint_pos_excluded_cfg_order = ref_motion_state.joint_pos[env_ids][:, env.keep_idx_ref]
+    joint_vel_excluded_cfg_order = ref_motion_state.joint_vel[env_ids][:, env.keep_idx_ref]
+
+    joint_pos = torch.zeros((len(env_ids), len(env._joint_ids)), device=env.device)
+    joint_vel = torch.zeros((len(env_ids), len(env._joint_ids)), device=env.device)
+    joint_pos[:, env.keep_idx_robot] = joint_pos_excluded_cfg_order  # joint_pos_full_cfg_order
+    joint_vel[:, env.keep_idx_robot] = joint_vel_excluded_cfg_order
+
     asset.write_joint_state_to_sim(joint_pos, joint_vel, env._joint_ids, env_ids=env_ids)
 
     root_states = asset.data.default_root_state[env_ids].clone()
