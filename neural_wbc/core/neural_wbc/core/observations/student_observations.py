@@ -34,8 +34,12 @@ def compute_student_observations(
     mask: torch.Tensor,
     ref_episodic_offset: torch.Tensor | None = None,
     local_base_ang_velocity: torch.Tensor | None = None,
+
+    keep_idx_robot: torch.Tensor | None = None,
+    keep_idx_ref: torch.Tensor | None = None,
 ) -> tuple[torch.Tensor, dict[str, torch.Tensor]]:
     """Computes observations for a student policy."""
+
     obs_dict = {
         "distilled_robot_state": compute_distilled_robot_state_observation(
             body_state=body_state,
@@ -48,6 +52,8 @@ def compute_student_observations(
             body_state=body_state,
             mask=mask,
             ref_episodic_offset=ref_episodic_offset,
+            keep_idx_robot=keep_idx_robot,
+            keep_idx_ref=keep_idx_ref,
         ),
         "distilled_last_action": last_actions,
         "distilled_historical_info": history,
@@ -66,11 +72,13 @@ def compute_distilled_imitation_observations(
     body_state: BodyState,
     mask: torch.Tensor,
     ref_episodic_offset: torch.Tensor | None,
+    keep_idx_robot: torch.Tensor | None = None,
+    keep_idx_ref: torch.Tensor | None = None,
 ) -> torch.Tensor:
     """Computes the reference goal state used in the observation of the student."""
     # First we get all reference states.
     kinematic_command = compute_kinematic_command(ref_motion_state, body_state, ref_episodic_offset)
-    joint_command = compute_joint_command(ref_motion_state, body_state)
+    joint_command = compute_joint_command(ref_motion_state, body_state, keep_idx_robot, keep_idx_ref)
     root_command = compute_root_command(ref_motion_state, body_state)
 
     # Apply masking to kinematic references. The mask contains 1 value for every kinematic body, but
@@ -141,15 +149,19 @@ def compute_kinematic_command(
     )
 
 
-def compute_joint_command(ref_motion_state: ReferenceMotionState, body_state: BodyState) -> torch.Tensor:
+def compute_joint_command(ref_motion_state: ReferenceMotionState, body_state: BodyState, keep_idx_robot: torch.Tensor | None = None, keep_idx_ref: torch.Tensor | None = None) -> torch.Tensor:
     """
     Compute the joint command used in the observation of the student.
 
     The joint reference is the delta between the current joint position/velocity and the target
     joint position/velocity.
     """
-    delta_joint_pos = ref_motion_state.joint_pos - body_state.joint_pos
-    raise NotImplementedError("MUST apply wrong joint order handling here")
+    # delta_joint_pos = ref_motion_state.joint_pos - body_state.joint_pos
+
+    joint_pos_ref_excluded_cfg_order = ref_motion_state.joint_pos[:, keep_idx_ref]
+    joint_pos_robot_excluded_cfg_order = body_state.joint_pos[:, keep_idx_robot]
+
+    delta_joint_pos = joint_pos_ref_excluded_cfg_order - joint_pos_robot_excluded_cfg_order
     return torch.cat([delta_joint_pos], dim=-1)
 
 

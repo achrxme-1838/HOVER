@@ -282,7 +282,7 @@ class NeuralWBCEnv(DirectRLEnv):
                 # Masked reference motion error:
                 + mask.calculate_command_length(
                     num_bodies=len(self._body_names_extend),
-                    num_joints=len(self._joint_ids),
+                    num_joints=len(self._joint_ids) - 2,
                 )
                 # Mask:
                 + len(self.mask_element_names)
@@ -292,10 +292,10 @@ class NeuralWBCEnv(DirectRLEnv):
                 + self.cfg.observation_history_length * (num_proprioceptive_states + self.num_actions)
             )
 
-        all_idx = torch.arange(len(self._joint_ids), device=self.device)
+        # all_idx = torch.arange(len(self._joint_ids), device=self.device)
 
-        self.keep_idx_robot = all_idx[~torch.isin(all_idx, torch.tensor(self.exclude_joint_idx_from_robot, device=self.device))]
-        self.keep_idx_ref = all_idx[~torch.isin(all_idx, torch.tensor(self.exclude_joint_idx_from_ref, device=self.device))]
+        # self.keep_idx_robot = all_idx[~torch.isin(all_idx, torch.tensor(self.exclude_joint_idx_from_robot, device=self.device))]
+        # self.keep_idx_ref = all_idx[~torch.isin(all_idx, torch.tensor(self.exclude_joint_idx_from_ref, device=self.device))]
 
     def _setup_scene(self):
         self._robot = Articulation(self.cfg.robot)

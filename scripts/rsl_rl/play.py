@@ -15,6 +15,8 @@
 
 """
 python play.py --teacher_policy.resume_path teacher/25_10_18_11-54-47 --teacher_policy.checkpoint 100000
+
+python play.py --student_player --student_path student/teacher_251008_25_10_20_13-48-50 --student_checkpoint 100000
 """
 
 

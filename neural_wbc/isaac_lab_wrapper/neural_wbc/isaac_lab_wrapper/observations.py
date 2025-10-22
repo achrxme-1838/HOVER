@@ -68,6 +68,9 @@ def compute_observations(
             history=env.history.entries,
             mask=env.mask,
             ref_episodic_offset=env.ref_episodic_offset,
+
+            keep_idx_robot=env.keep_idx_robot,
+            keep_idx_ref=env.keep_idx_ref,
         )
 
         obs_dict.update(student_obs_dict)

@@ -40,7 +40,9 @@ parser.add_argument("--num_envs", type=int, default=None, help="Number of enviro
 parser.add_argument("--seed", type=int, default=None, help="Seed used for the environment.")
 parser.add_argument("--reference_motion_path", type=str, default=None, help="Path to the reference motion dataset.")
 parser.add_argument("--output_dir", type=str, default="logs", help="Directory to store the training output.")
-parser.add_argument("--robot", type=str, choices=["h1", "gr1"], default="h1", help="Robot used in environment")
+parser.add_argument("--robot", type=str, choices=["h1", "gr1", "g1"], default="g1", help="Robot used in environment")
+parser.add_argument("--logger", type=str, default=None, choices={"wandb"}, help="Logger module to use.")
+
 parser.add_argument(
     f"--{student_policy_args_prefix}root_path",
     type=str,
@@ -75,11 +77,16 @@ from vecenv_wrapper import RslRlNeuralWBCVecEnvWrapper
 from neural_wbc.core.modes import NeuralWBCModes
 from neural_wbc.isaac_lab_wrapper.neural_wbc_env import NeuralWBCEnv
 from neural_wbc.isaac_lab_wrapper.neural_wbc_env_cfg_h1 import NeuralWBCEnvCfgH1
+from neural_wbc.isaac_lab_wrapper.neural_wbc_env_cfg_g1 import NeuralWBCEnvCfgG1
 
 torch.backends.cuda.matmul.allow_tf32 = True
 torch.backends.cudnn.allow_tf32 = True
 torch.backends.cudnn.deterministic = False
 torch.backends.cudnn.benchmark = False
+
+"""
+python train_student_policy.py --teacher_policy.resume_path teacher/25_10_18_11-54-47 --teacher_policy.checkpoint 100000 --num_envs=4096 --logger wandb --headless
+"""
 
 
 class NeuralWBCTeacherPolicy(TeacherPolicy):
@@ -123,6 +130,10 @@ def resolve_student_policy_path(root_path: str, teacher_policy: NeuralWBCTeacher
     Returns:
         str: The generated absolute path for storing the student policy configurations.
     """
+    # print(os.path.abspath(root_path))
+    # print(teacher_policy.name)
+    # raise Exception
+
     path = os.path.join(os.path.abspath(root_path), teacher_policy.name)
     if append_timestamp:
         path += "_" + datetime.now().strftime("%y_%m_%d_%H-%M-%S")
@@ -262,6 +273,8 @@ def main():
     # parse configuration
     if args_cli.robot == "h1":
         env_cfg = NeuralWBCEnvCfgH1(mode=NeuralWBCModes.DISTILL)
+    elif args_cli.robot == "g1":
+        env_cfg = NeuralWBCEnvCfgG1(mode=NeuralWBCModes.DISTILL)
     elif args_cli.robot == "gr1":
         raise ValueError("GR1 is not yet implemented")
     env_cfg.scene.num_envs = args_cli.num_envs
@@ -269,6 +282,11 @@ def main():
     env_cfg.terrain.env_spacing = 20
     if args_cli.reference_motion_path:
         env_cfg.reference_motion_manager.motion_path = args_cli.reference_motion_path
+
+    logger_cfg = args_cli.logger
+    if logger_cfg == "wandb":
+        import wandb
+        wandb.init(project='HOVER', name='student_policy_training')
 
     # Create env and wrap it for RSL RL.
     env = NeuralWBCEnv(cfg=env_cfg)
@@ -283,7 +301,7 @@ def main():
     trainer_cfg = get_student_trainer_cfg(args=args_cli, env=env, teacher_policy=teacher_policy)
     os.makedirs(trainer_cfg.student_policy_path, exist_ok=True)
     env_cfg.save(os.path.join(trainer_cfg.student_policy_path, "env_config.json"))
-    trainer = StudentPolicyTrainer(env=wrapped_env, cfg=trainer_cfg)
+    trainer = StudentPolicyTrainer(env=wrapped_env, cfg=trainer_cfg, logger_cfg=logger_cfg)
     trainer.run()
 
     # close the simulator

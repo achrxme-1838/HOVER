@@ -63,13 +63,15 @@ class Player:
         self.wrapped_env = RslRlNeuralWBCVecEnvWrapper(self.env)
 
         if self.student_player:
-            student_path = args_cli.student_path
+            log_root_path = "/home/lim/rl_ws/HOVER/logs"
+            student_path = os.path.join(log_root_path, args_cli.student_path)
+
             if student_path:
                 with open(os.path.join(student_path, "config.json")) as fh:
                     config_dict = json.load(fh)
                 config_dict["teacher_policy"] = None
                 config_dict["resume_path"] = student_path
-                config_dict["checkpoint"] = args_cli.student_checkpoint
+                config_dict["checkpoint"] = "model_" + args_cli.student_checkpoint + ".pt"
                 student_cfg = StudentPolicyTrainerCfg(**config_dict)
                 student_trainer = StudentPolicyTrainer(env=self.wrapped_env, cfg=student_cfg)
                 self.policy = student_trainer.get_inference_policy(device=self.env.device)

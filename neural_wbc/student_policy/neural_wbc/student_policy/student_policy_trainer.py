@@ -28,11 +28,13 @@ from neural_wbc.student_policy.policy import StudentPolicy
 from neural_wbc.student_policy.storage import Slice, Storage
 from neural_wbc.student_policy.student_policy_trainer_cfg import StudentPolicyTrainerCfg
 
+import wandb
 
 class StudentPolicyTrainer:
-    def __init__(self, env, cfg: StudentPolicyTrainerCfg):
+    def __init__(self, env, cfg: StudentPolicyTrainerCfg, logger_cfg=None):
         self._logger = logging.getLogger("student_policy_trainer")
         self._logger.setLevel(logging.INFO)
+        self.logger = logger_cfg
 
         self._env = env
         self._cfg = cfg
@@ -142,6 +144,9 @@ class StudentPolicyTrainer:
                 )
 
             self._iterations += 1
+            
+            it = self._iterations
+
             stop = time.time()
             cleanup_duration = stop - start
 
@@ -158,6 +163,8 @@ class StudentPolicyTrainer:
         iteration_duration = locs["collection_duration"] + locs["learn_duration"] + locs["cleanup_duration"]
 
         ep_string = ""
+        wandb_dict = {}
+
         if locs["ep_infos"]:
             for key in locs["ep_infos"][0]:
                 infotensor = torch.tensor([], device=self._device)
@@ -170,9 +177,27 @@ class StudentPolicyTrainer:
                     infotensor = torch.cat((infotensor, ep_info[key].to(self._device)))
                 value = torch.mean(infotensor)
                 self.writer.add_scalar("Episode/" + key, value, self._iterations)
+
+                if self.logger == "wandb":
+                    wandb_dict["Episode/" + key] = value
+
                 ep_string += f"""{f'Mean episode {key}:':>{pad}} {value:.4f}\n"""
         mean_std = self._student.std.mean()
         fps = int(self._cfg.num_steps_per_env * self._env.num_envs / iteration_duration)
+
+        if self.logger == "wandb":
+            wandb_dict["Loss/learning_rate"] = self._cfg.learning_rate
+            wandb_dict["Loss/mean_loss"] = locs["mean_loss"]
+            wandb_dict["Policy/mean_noise_std"] = mean_std.item()
+            if len(locs["rewbuffer"]) > 0:
+                wandb_dict["Train/mean_reward"] = statistics.mean(locs["rewbuffer"])
+                wandb_dict["Train/mean_cost"] = statistics.mean(locs["costbuffer"])
+                wandb_dict["Train/mean_episode_length"] = statistics.mean(locs["lenbuffer"])
+            if "eval_info" in locs:
+                wandb_dict["Eval/Success_rate"] = locs["eval_info"]["eval_success_rate"]
+
+            wandb.log(wandb_dict, step=locs["it"])
+
 
         self.writer.add_scalar("Loss/learning_rate", self._cfg.learning_rate, self._iterations)
         self.writer.add_scalar("Loss/mean_loss", locs["mean_loss"], self._iterations)

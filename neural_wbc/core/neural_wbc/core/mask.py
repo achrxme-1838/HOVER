@@ -37,7 +37,9 @@ def calculate_command_length(num_bodies: int, num_joints: int, num_root_referenc
 def create_mask_element_names(body_names: list[str], joint_names: list[str]):
     """Get a name for each element of the mask."""
     body_names = [name + "_local_pos_" for name in body_names]
-    joint_names = [name + "_joint_pos" for name in joint_names]
+    # joint_names = [name + "_joint_pos" for name in joint_names]
+    joint_names = [name + "_joint_pos" for name in joint_names if "wrist_roll" not in name]
+
     root_reference_names = [
         "root_linear_velocity_x",
         "root_linear_velocity_y",

@@ -34,11 +34,11 @@ from .terrain import HARD_ROUGH_TERRAINS_CFG, flat_terrain
 
 DISTILL_MASK_MODES_ALL = {
     "exbody": {
-        "upper_body": [".*torso_joint.*", ".*shoulder.*joint.*", ".*elbow.*joint.*"],
+        "upper_body": ["waist_yaw_joint.*", ".*shoulder.*joint.*", ".*elbow.*joint.*"],
         "lower_body": ["root.*"],
     },
     "humanplus": {
-        "upper_body": [".*torso_joint.*", ".*shoulder.*joint.*", ".*elbow.*joint.*"],
+        "upper_body": ["waist_yaw_joint.*", ".*shoulder.*joint.*", ".*elbow.*joint.*"],
         "lower_body": [".*hip.*joint.*", ".*knee.*joint.*", ".*ankle.*joint.*", "root.*"],
     },
     "h2o": {
@@ -62,14 +62,15 @@ class NeuralWBCEnvCfgG1(NeuralWBCEnvCfg):
     observation_space = 995   # 913
     state_space = 1084  # 990
     # Distillation parameters:
-    single_history_dim = 63  # TODO?
+    single_history_dim = 75
     observation_history_length = 25
 
     # Mask setup for an OH2O specialist policy as default:
     # OH2O mode is tracking the head and hand positions. This can be modified to train a different specialist
     # or use the full DISTILL_MASK_MODES_ALL to train a generalist policy.
     distill_mask_sparsity_randomization_enabled = False
-    distill_mask_modes = {"omnih2o": DISTILL_MASK_MODES_ALL["omnih2o"]}
+    # distill_mask_modes = {"omnih2o": DISTILL_MASK_MODES_ALL["omnih2o"]}
+    distill_mask_modes = DISTILL_MASK_MODES_ALL
 
     # Robot geometry / actuation parameters:
     actuators={
@@ -318,5 +319,7 @@ class NeuralWBCEnvCfgG1(NeuralWBCEnvCfg):
             self.resample_motions = False
             self.distill_mask_sparsity_randomization_enabled = False
             self.distill_mask_modes = {"omnih2o": DISTILL_MASK_MODES_ALL["omnih2o"]}
+            # self.distill_mask_modes = {"h2o": DISTILL_MASK_MODES_ALL["h2o"]}
+            # self.distill_mask_modes = {"exbody": DISTILL_MASK_MODES_ALL["exbody"]}
         else:
             raise ValueError(f"Unsupported mode {self.mode}")
