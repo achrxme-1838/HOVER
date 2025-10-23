@@ -393,14 +393,14 @@ class NeuralWBCEnv(DirectRLEnv):
             "mask": self._mask.detach().clone(),
             "state": {
                 "body_pos": body_state.body_pos_extend.detach().clone(),
-                "joint_pos": body_state.joint_pos.detach().clone(),
+                "joint_pos": body_state.joint_pos[:, self.keep_idx_robot].detach().clone(),
                 "root_pos": body_state.root_pos.detach().clone(),
                 "root_lin_vel": body_state.root_lin_vel.detach().clone(),
                 "root_rot": body_state.root_rot.detach().clone(),
             },
             "ground_truth": {
                 "body_pos": ref_motion_state.body_pos_extend.detach().clone(),
-                "joint_pos": ref_motion_state.joint_pos.detach().clone(),
+                "joint_pos": ref_motion_state.joint_pos[:, self.keep_idx_ref].detach().clone(),
                 "root_pos": ref_motion_state.root_pos.detach().clone(),
                 "root_lin_vel": ref_motion_state.root_lin_vel.detach().clone(),
                 "root_rot": ref_motion_state.root_rot.detach().clone(),

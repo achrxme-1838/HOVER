@@ -625,8 +625,10 @@ class Evaluator:
             data["body_pos_masked"] = None
 
         joint_pos = data.pop("joint_pos")
-        data["upper_body_joint_pos"] = joint_pos[:, upper_joint_ids]
+        
         data["lower_body_joint_pos"] = joint_pos[:, lower_joint_ids]
+        data["upper_body_joint_pos"] = joint_pos[:, max(lower_joint_ids):]
+
         return Frame.from_dict(data)
 
     def _update_failure_metrics(self, newly_terminated: torch.Tensor, info: dict):

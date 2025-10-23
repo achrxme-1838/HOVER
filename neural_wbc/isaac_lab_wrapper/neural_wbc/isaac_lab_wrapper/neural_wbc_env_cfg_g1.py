@@ -318,8 +318,8 @@ class NeuralWBCEnvCfgG1(NeuralWBCEnvCfg):
             self.add_policy_obs_noise = False
             self.resample_motions = False
             self.distill_mask_sparsity_randomization_enabled = False
-            self.distill_mask_modes = {"omnih2o": DISTILL_MASK_MODES_ALL["omnih2o"]}
-            # self.distill_mask_modes = {"h2o": DISTILL_MASK_MODES_ALL["h2o"]}
+            # self.distill_mask_modes = {"omnih2o": DISTILL_MASK_MODES_ALL["omnih2o"]}
+            self.distill_mask_modes = {"h2o": DISTILL_MASK_MODES_ALL["h2o"]}
             # self.distill_mask_modes = {"exbody": DISTILL_MASK_MODES_ALL["exbody"]}
         else:
             raise ValueError(f"Unsupported mode {self.mode}")

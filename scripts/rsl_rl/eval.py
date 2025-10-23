@@ -14,6 +14,10 @@
 # limitations under the License.
 
 
+"""
+python eval.py --student_player --student_path student/teacher_251008_25_10_20_13-48-50 --student_checkpoint 100000 --num_envs=1024 --headless
+"""
+
 import pprint
 import yaml
 
